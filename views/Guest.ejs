@@ -1,0 +1,74 @@
+<%- include('partials/header.ejs'); -%>
+
+<div class="container m-2">
+    <div class="col-12">
+        <button type="button" onclick="window.location.href='/';">Home</button>
+    </div>
+    
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center bg-warning shadow">
+            <h1>Guest List</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <% dguest.forEach(Dguest => { %>
+            <div class="col-12 border m-1 text-center ">
+                <table class="table shadow">
+                    <thead class="bg-primary text-light ">
+                        <tr >
+                            <th class="border">Room no.</th>
+                        <th class="border">Name</th>
+                        <th class="border">Govt_Id</th>
+                        <th class="border">Address</th>
+                            <th class="border">Phone</th>   
+                              <th class="border">Joining Date</th>  
+                              <th class="border">Joining Time</th> 
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td class="border"><%= Dguest.room_number %></td>
+                            <td class="border"><%= Dguest.guest_name %></td>
+                            <td class="border"><%= Dguest.guest_id %></td>
+                            <td class="border"><%= Dguest.guest_address%></td>
+                            <td class="border"><%= Dguest.guest_phone %></td>
+                            <td class="border"><%= Dguest.date_of_join %></td>
+                            <td class="border"><%= Dguest.time_of_join %></td>
+
+                        </tr>
+                        <tr></tr>
+                    </tbody>
+
+                </table>
+                       <!--Delete-->
+            <form action="/del" method="POST" style="display: inline;">
+                <input type="hidden" name="room_number" value="<%= Dguest.room_number %>">
+                <input type="hidden" name="guest_name" value="<%= Dguest.guest_name %>">
+                <input type="hidden" name="guest_id" value="<%= Dguest.guest_id %>">
+                <input type="hidden" name="guest_address" value="<%= Dguest.guest_address %>">
+                <input type="hidden" name="guest_phone" value="<%= Dguest.guest_phone %>">
+                <input type="hidden" name="date" value="<%= Dguest.date_of_join %>">
+                <input type="hidden" name="time " value="<%= Dguest.time_of_join %>">
+                <button class="btn-outline-danger" type="submit">Delete</button>
+            </form>
+            </div>
+
+     
+            <!--Edit button-->
+            
+         <% }); %>   
+    </div>
+</div>
+
+
+
+
+
+<%- include('partials/footer.ejs'); -%>

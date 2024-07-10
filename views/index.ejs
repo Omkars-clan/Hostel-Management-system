@@ -1,0 +1,109 @@
+<%- include('partials/header.ejs'); -%>
+
+<div class="container">
+   <div class="row">
+    <div class="col-12 text-center m-3 text-warning shadow"><h1>Welcome to Paying Guest Management System</h1></div>
+   </div>
+</div>
+
+<div class="container">
+    <div class="row text-center d-flex justify-content-center">
+        <div class="col-3 border m-1 shadow"><h3>Total Guest</h3>
+            <p id="TGuest"><%= tguest %></p>
+        </div>
+        <div class="col-3 border m-1 shadow"><h3>Total Rooms</h3>
+            <p id="TRooms"><%= Trooms %></p> <!-- Display total rooms count -->
+        </div>
+        <div class="col-3 border m-1 shadow"><h4>Available Capacity</h4>
+            <p id="Tamount">0</p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row text-center d-flex justify-content-center">
+        <div class="col-3 border m-1 shadow"><p>Book a Room</p>
+            <button type="button" class="btn btn-outline-success" onclick="Booking()" id="Bookbtn">Book</button>
+        </div>
+        <div class="col-3 border m-1 shadow"><p>Guest Manage</p>
+            <button type="button" class="btn btn-outline-danger" onclick="window.location.href='/views/Guest.ejs'" >Manage</button>
+        </div>
+        <div class="col-3 border m-1 shadow"><p>Add Room</p>
+            <button type="button" class="btn btn-outline-success" onclick="OpenForm()">Add Room</button>
+        </div>
+    </div>
+</div>
+
+<!-- Room tabs -->
+<div class="container">
+    <div class="row">
+        <% capacities.forEach(capacity => { %>
+        <div id="box-<%= capacity.roomNumber %>"  class="col-4 bg-warning m-1 border text-center shadow p-2">
+            <h4> Room Number : <%= capacity.roomNumber %> </h4> 
+            <h5>Capacity : <%= capacity.typeRoom %></h5>
+            <h6>Bookings : <%= capacity.bookingCount %></h6>
+            <u>Amenities : <%= capacity.facility %></u>
+            <form id="deleteRoomForm" action="/delroom" method="POST">
+                <input type="hidden" name="delRoom" value="<%= capacity.roomNumber %>">
+                <button class="btn-danger" type="submit">Delete</button>
+            </form>
+        </div>
+        <% }); %>
+    </div>
+</div>
+
+<!-- Room Tabs -->
+<div class="container border text-center bg-warning" id="Room" style="display:none">
+    <div class="row">
+        <div class="col-12 text-danger" ><button class="bg-danger text-light" onclick="closed()">X</button></div>
+        <div class="col-12"><h4 class="text-success">Create a room</h4></div>
+    </div>
+    <form action="/room" method="post">
+        <label for="RoomNo">Enter Room No.</label><br>
+        <input type="number" name="room_number" id="RoomNo" placeholder="Existing room no. only" required><br>
+        
+        <label for="Tor">No. of sharing</label><br>
+        <input type="number" name="room_type" id="Tor" placeholder="Ex: 1,2 etc " required><br>
+        
+        <label for="Amenities">Enter Amenities</label><br>
+        <input type="text" name="amenities" id="Amenities" required><br>
+        <br>
+        <button class="btn-success" type="submit">Submit</button>
+    </form>
+</div>
+
+<!--Booking form-->
+<div class="container border text-center shadow bg-warning" id="booking" style="display:none;">
+    <div class="row">
+        <div class="col-12 text-danger" ><button class="bg-danger text-light" onclick="closed()">X</button></div>
+        
+    </div>
+
+    <form action="/book" method="post">
+        <h4 class="text-success">New Guest Booking</h4>
+        <label for="BookedRoomNo">Room Number</label><br>
+        <input type="text" name="room_number"><br>
+        
+        <label for="GuestName">Guest Name</label><br>
+        <input type="text" name="guest_name" id="GuestName" required><br>
+        
+        <label for="GuestID">Guest Govt ID</label><br>
+        <input type="text" name="guest_id" id="GuestID" required><br>
+        
+        <label for="GuestAddress">Guest Address</label><br>
+        <input type="text" name="guest_address" id="GuestAddress" required><br>
+        
+        <label for="GuestPhone">Guest Phone</label><br>
+        <input type="phone" name="guest_phone" id="GuestPhone" required><br>
+        
+        <label for="BookingDate">Date</label><br>
+        <input type="date" name="date" id="BookingDate" required><br>
+        
+        <label for="BookingTime">Time</label><br>
+        <input type="time" name="time" id="BookingTime" required><br>
+        <br>
+        <button class="btn-success" type="submit" onclick="Booked()">Book Room</button>
+    </form>
+</div>
+
+<%- include('partials/footer.ejs'); -%>

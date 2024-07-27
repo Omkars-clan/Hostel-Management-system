@@ -35,3 +35,38 @@ document.getElementById('deleteRoomForm').addEventListener('submit', function(ev
         event.preventDefault(); // Prevent form submission if user clicks "Cancel"
     }
 });
+
+//Room availability 
+// Get the element by its ID
+var Capacity = document.getElementById("Tcapacity");
+var Bookings = document.getElementById("Tbookings");
+
+// Get the text content of the element
+var textContent = Capacity.textContent;
+var textContents = Bookings.textContent;
+
+// Use a regular expression to extract the number from the text
+var numberMatch = textContent.match(/\d+/);
+var numberMatchs = textContents.match(/\d+/);
+
+// Convert the matched number to an integer, if a match is found
+var capacityValue = numberMatch ? parseInt(numberMatch[0], 10) : null;
+var bookingValues = numberMatchs ? parseInt(numberMatchs[0], 10) : null;
+
+// Log the result
+console.log(capacityValue);
+console.log(bookingValues);
+
+var availability =  capacityValue - bookingValues;
+console.log(availability);
+document.getElementById("Tcap").innerText = availability + " Persons";
+
+//Date format 
+var DDY = new Date();
+var date = DDY.getDate();
+var month = DDY.getMonth() + 1;
+var year = DDY.getFullYear();
+var day = DDY.getDay();
+var days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+
+document.getElementById("head").innerText = "Hi, today is "+ days[day - 1] + " : " + date + "-" + month + "-" + year ;  

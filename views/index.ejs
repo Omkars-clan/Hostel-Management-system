@@ -3,54 +3,120 @@
 <div class="container">
    <div class="row">
     <div class="col-12 text-center m-3 text-warning shadow"><h1>Welcome to Paying Guest Management System</h1></div>
+    <div class="col-12 text-center"><h6 id="head"></h6></div>
    </div>
 </div>
 
 <div class="container">
     <div class="row text-center d-flex justify-content-center">
-        <div class="col-3 border m-1 shadow"><h3>Total Guest</h3>
+        <div class="col-3 dsn border m-1 shadow"><h3>Total Guest</h3>
             <p id="TGuest"><%= tguest %></p>
         </div>
-        <div class="col-3 border m-1 shadow"><h3>Total Rooms</h3>
+        <div class="col-3 dsn border m-1 shadow"><h3>Total Rooms</h3>
             <p id="TRooms"><%= Trooms %></p> <!-- Display total rooms count -->
         </div>
-        <div class="col-3 border m-1 shadow"><h4>Available Capacity</h4>
-            <p id="Tamount">0</p>
+        <div class="col-3 dsn border m-1 shadow"><h4>Available Capacity</h4>
+            <p id="Tcap"></p>
         </div>
     </div>
 </div>
+
+<!--Managing buttons-->
 
 <div class="container">
     <div class="row text-center d-flex justify-content-center">
-        <div class="col-3 border m-1 shadow"><p>Book a Room</p>
-            <button type="button" class="btn btn-outline-success" onclick="Booking()" id="Bookbtn">Book</button>
+        <div class="col-3 dsn border m-1 shadow"><p>Book a Room</p>
+            <button type="button" class="btn btn-success" onclick="Booking()" id="Bookbtn">Book</button>
         </div>
-        <div class="col-3 border m-1 shadow"><p>Guest Manage</p>
-            <button type="button" class="btn btn-outline-danger" onclick="window.location.href='/views/Guest.ejs'" >Manage</button>
+        <div class="col-3 dsn border m-1 shadow"><p>Guest Manage</p>
+            <button type="button" class="btn btn-danger" onclick="window.location.href='/views/Guest.ejs'" >Manage</button>
         </div>
-        <div class="col-3 border m-1 shadow"><p>Add Room</p>
-            <button type="button" class="btn btn-outline-success" onclick="OpenForm()">Add Room</button>
+        <div class="col-3 dsn border m-1 shadow"><p>Add Room</p>
+            <button type="button" class="btn btn-success" onclick="OpenForm()">Add Room</button>
         </div>
     </div>
 </div>
 
-<!-- Room tabs -->
+<!--Employee and guest manager-->
+
 <div class="container">
-    <div class="row">
+    <div class="row text-center d-flex justify-content-center">
+        <div class="col-3 dsn border m-1 shadow"><p>Guest History</p>
+            <button type="button" class="btn btn-success" onclick="window.location.href='/views/Hguest.ejs'" id="Bookbtn">History</button>
+        </div>
+        <div class="col-3 dsn border m-1 shadow"><p>Manage Employee</p>
+            <button type="button" class="btn btn-danger" onclick="window.location.href='/views/Employee.ejs'" >Manage</button>
+        </div>
+        <div class="col-3 dsn border m-1 shadow"><p>Add Employer</p>
+            <button type="button" class="btn btn-success" onclick="OpenForm()">Add Employee</button>
+        </div>
+    </div>
+</div>
+
+<!--Managing buttons-->
+
+
+
+
+<!--Rooms tabs -->
+
+<div class="container">
+    <div class="row justify-content-center text-dark shadow">
+        <% 
+        let totalCapacity = 0; // Initialize a variable to hold the total capacity
+        
+        capacities.forEach(capacity => {
+            if (Array.isArray(capacity.typeRoom)) {
+                // Sum up the integers in the array
+                totalCapacity += capacity.typeRoom.reduce((sum, value) => sum + (parseInt(value) || 0), 0);
+            } else {
+                // Handle the case where typeRoom is not an array (if necessary)
+                totalCapacity += parseInt(capacity.typeRoom) || 0;
+            }
+        }); 
+
+
+        let totalBookings = 0; // Initialize a variable to hold the total capacity
+        
+        capacities.forEach(capacity => {
+            if (Array.isArray(capacity.bookingCount)) {
+                // Sum up the integers in the array
+                totalBookings += capacity.bookingCount.reduce((sum, value) => sum + (parseInt(value) || 0), 0);
+            } else {
+                // Handle the case where typeRoom is not an array (if necessary)
+                totalBookings += parseInt(capacity.bookingCount) || 0;
+            }
+        }); 
+
+
+       
+
+      
+        %>
+        
         <% capacities.forEach(capacity => { %>
-        <div id="box-<%= capacity.roomNumber %>"  class="col-4 bg-warning m-1 border text-center shadow p-2">
-            <h4> Room Number : <%= capacity.roomNumber %> </h4> 
-            <h5>Capacity : <%= capacity.typeRoom %></h5>
-            <h6>Bookings : <%= capacity.bookingCount %></h6>
-            <u>Amenities : <%= capacity.facility %></u>
+        <div id="box-<%= capacity.roomNumber %>" class="col-3 bg-warning m-1 border text-center shadow p-2 text-wrap">
+            <h4>Room Number: <%= capacity.roomNumber %></h4>
+            <h5 id="room-info">Capacity: <%= Array.isArray(capacity.typeRoom) ? capacity.typeRoom.join(', ') : capacity.typeRoom %></h5>
+            <h6>Bookings: <%= capacity.bookingCount %></h6>
+            <p class="text-break"><u>Amenities: <%= capacity.facility %></u></p>
             <form id="deleteRoomForm" action="/delroom" method="POST">
                 <input type="hidden" name="delRoom" value="<%= capacity.roomNumber %>">
-                <button class="btn-danger" type="submit">Delete</button>
+                <button class="btn btn-danger" type="submit">Delete</button>
             </form>
         </div>
         <% }); %>
+
+        <!-- Display the total capacity -->
+        <div class="col-12 text-center mt-3">
+            <h4 id="Tcapacity">Total Capacity: <%= totalCapacity %></h4>
+            <h4 id="Tbookings">Total Bookings: <%= totalBookings %></h4>
+        </div>
     </div>
 </div>
+
+
+
 
 <!-- Room Tabs -->
 <div class="container border text-center bg-warning" id="Room" style="display:none">
@@ -71,6 +137,8 @@
         <button class="btn-success" type="submit">Submit</button>
     </form>
 </div>
+
++
 
 <!--Booking form-->
 <div class="container border text-center shadow bg-warning" id="booking" style="display:none;">
@@ -105,5 +173,7 @@
         <button class="btn-success" type="submit" onclick="Booked()">Book Room</button>
     </form>
 </div>
+
+
 
 <%- include('partials/footer.ejs'); -%>

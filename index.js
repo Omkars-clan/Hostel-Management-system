@@ -17,17 +17,26 @@ db.connect();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
+
+//Guest History
+async function Hguest() {
+    const guest = await db.query("select * from guest_history");
+    return guest.rows;
+}
+
+//Guest list 
 async function Dguest() {
     const guest = await db.query("select * from bookings");
     return guest.rows;
 }
+
+//Rooms list
 async function getRooms() {
     const room = await db.query("SELECT * FROM rooms");
     return room.rows;
 }
 
-
-
+//Total rooms number output
 async function TRooms() {
     try {
         const result = await db.query("SELECT COUNT(*) FROM rooms");
@@ -39,6 +48,7 @@ async function TRooms() {
     }
 }
 
+//total guest output
 async function Tguest() {
     try {
         const result = await db.query(`SELECT COUNT(*) AS total_bookings FROM bookings`);
@@ -49,6 +59,8 @@ async function Tguest() {
         throw error;
     }
 }
+
+//Room tiles information
 
 async function Capacity() {
     try {
@@ -85,8 +97,29 @@ async function Capacity() {
 
 app.set("view engine", "ejs");
 
+//emplyee management
+app.get('/views/Employee.ejs', async (req, res) => {
+    try {
+       
+        res.render('Employee'); // Pass dguest to the Guest.ejs template
+    } catch (error) {
+        console.error("Error rendering Emplyee page:", error);
+        res.status(500).send("Error rendering Guest page");
+    }
+});
 
-// Assuming other imports and setup are already in place
+//Rout to Guest history
+app.get('/views/Hguest.ejs', async (req, res) => {
+    try {
+        const hguest = await Hguest(); // Fetch the guest data
+        res.render('Hguest', { hguest }); // Pass dguest to the Guest.ejs template
+    } catch (error) {
+        console.error("Error rendering Guest page:", error);
+        res.status(500).send("Error rendering Guest page");
+    }
+});
+
+
 
 // Example route to handle rendering Guest.ejs
 app.get('/views/Guest.ejs', async (req, res) => {
@@ -102,13 +135,13 @@ app.get('/views/Guest.ejs', async (req, res) => {
 // Route handler for rendering the main page (index.ejs)
 app.get("/", async (req, res) => {
     try {
-        const dguest = await Dguest();
         const allRooms = await getRooms();
         const Trooms = await TRooms();
         const tguest = await Tguest();
         const capacities = await Capacity();
 
-        res.render("index", { allRooms, Trooms, capacities, tguest, dguest }); // Render index.ejs
+        res.render("index", { allRooms, Trooms, capacities, tguest });
+         // Render index.ejs
     } catch (error) {
         console.error("Error rendering main page:", error);
         res.status(500).send("Error rendering main page");
@@ -162,7 +195,7 @@ app.post("/book", async (req, res) => {
 });
 
 
-//deleting task from frontend by double clicking on task 
+//deleting task from frontend by double clicking on task (Guest page)
 
 app.post ("/del", async (req, res) => {
     const taskID = req.body.guest_name;
@@ -183,7 +216,19 @@ app.post ("/del", async (req, res) => {
       }
     });
 
-    //deleting room
+    app.post ("/del_Hg", async (req, res) => {
+        const H_guest = req.body.guest_name;
+        console.log("Deleted Guest Data permanent Successfully");
+        try {
+            await db.query("DELETE FROM guest_history WHERE guest_name = $1", [H_guest]);     
+            res.redirect("/");
+          } catch (err) {
+            console.log(err);
+            
+          }
+        });
+
+    //deleting room (Room Tile)
     app.post ("/delroom", async (req, res) => {
         const Rmno = req.body.delRoom;
         console.log("Room is removed succesfully");
@@ -208,6 +253,9 @@ app.post('/update', async (req, res) => {
         res.status(500).send("Error updating task");
     }
 });
+
+
+
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

@@ -18,6 +18,18 @@
         <div class="col-3 dsn border m-1 shadow"><h4>Available Capacity</h4>
             <p id="Tcap"></p>
         </div>
+    
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 m-2 d-flex justify-content-center">
+          
+                <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+     
+            
+        </div>
     </div>
 </div>
 
@@ -47,8 +59,8 @@
         <div class="col-3 dsn border m-1 shadow"><p>Manage Employee</p>
             <button type="button" class="btn btn-danger" onclick="window.location.href='/views/Employee.ejs'" >Manage</button>
         </div>
-        <div class="col-3 dsn border m-1 shadow"><p>Add Employer</p>
-            <button type="button" class="btn btn-success" onclick="OpenForm()">Add Employee</button>
+        <div class="col-3 dsn border m-1 shadow"><p>Employee Attendence</p>
+            <button type="button" class="btn btn-success" onclick="OpenAttendence()">Attendence</button>
         </div>
     </div>
 </div>
@@ -119,10 +131,11 @@
 
 
 <!-- Room Tabs -->
-<div class="container border text-center bg-warning" id="Room" style="display:none">
-    <div class="row">
-        <div class="col-12 text-danger" ><button class="bg-danger text-light" onclick="closed()">X</button></div>
-        <div class="col-12"><h4 class="text-success">Create a room</h4></div>
+<div class="container border text-center " id="Room" style="display:none">
+    <div class="row border">
+        
+        <div class="col-lg-6 text-start"><h6 class="">Create a new Room</h6></div>
+        <div class="col-lg-6 text-end"><button class="bg-danger text-light" onclick="closed()">X</button></div>
     </div>
     <form action="/room" method="post">
         <label for="RoomNo">Enter Room No.</label><br>
@@ -138,17 +151,21 @@
     </form>
 </div>
 
-+
+
 
 <!--Booking form-->
-<div class="container border text-center shadow bg-warning" id="booking" style="display:none;">
-    <div class="row">
-        <div class="col-12 text-danger" ><button class="bg-danger text-light" onclick="closed()">X</button></div>
+<div class="container border text-center shadow " id="booking" style="display:none;">
+    <div class="row border">
+
+        <div class="col-lg-6 text-start"><h6 class="">New Guest Booking</h6></div>
+        <div class="col-lg-6 text-end"><button class="bg-danger text-light" onclick="closed()">X</button></div>
+        
+       
         
     </div>
 
     <form action="/book" method="post">
-        <h4 class="text-success">New Guest Booking</h4>
+       
         <label for="BookedRoomNo">Room Number</label><br>
         <input type="text" name="room_number"><br>
         
@@ -173,6 +190,52 @@
         <button class="btn-success" type="submit" onclick="Booked()">Book Room</button>
     </form>
 </div>
+
+
+<div class="container " id="Attendence" style="display:none;">
+    <div class="row border">
+        <div class="col-6 text-start" > 
+                <h6 class="text-start">Employee Attendence</h6>
+            </div>
+            <div class="col-6 text-danger text-end" >
+                <button class="bg-danger  text-light" onclick="closed()">X</button>
+            </div>
+        <div class="col-12 border text-center shadow p-4">
+
+
+            <form action="/add-attendence" method="post">
+                <label for="">EmployeeId</label><br>
+                <input type="text" name="employeeId" id="" required><br>
+                <label for="">Date</label><br>
+                <input type="date" name="attendanceDate" id="" required><br>
+            
+                <label for="">Attendence</label><br>
+                <select name="present" id="" required>
+                    <option value="None">None</option>
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+                </select><br>
+            
+                <label for="">Work Type</label><br>
+                <select name="workType" id="" required>
+                    <option value="full_day">full_day</option>
+                    <option value="half_day">half_day</option>
+                    <option value="leave">leave</option>
+                </select> <br>
+            
+                <label for="">Hours</label><br>
+                <input type="number" name="hours" required><br>
+            
+                <button type="submit" onclick="closed()">Submit</button> 
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+
 
 
 

@@ -1,35 +1,179 @@
 <%- include('partials/header.ejs'); -%>
 
+<div class="container m-2"> 
+    <div class="col-12">
+        <button type="button" class="btn btn-success" onclick ="window.location.href='/';">Home</button>
+    </div>
+</div>
 <div class="container">
     <div class="row">
-        <div class="col border shadow ">
-            <h1>Employee Attendece </h1>
-
-        
-
-        </div>
+        <div class="col-12 text-center shadow border"><h1>Employee Portal</h1></div>
     </div>
 </div>
 
-<div class="container">
+
+<button onclick="document.getElementById('Addemployees').style.display = 'block';">Add Employee</button>
+
+<!--Add Employee form-->
+
+<div class="container mt-5" id="Addemployees" style="display: none;">
+    <div class="row border" >
+
+        <div class="col-6 text-start" > 
+            <h6 class="text-start">Add Employee</h6>
+        </div>
+        <div class="col-6 text-danger text-end" >
+            <button class="bg-danger  text-light" onclick="document.getElementById('Addemployees').style.display = 'none';">X</button>
+
+        </div>
+
+        <div class="col-12 border shadow" >
+           
+            <div class="container mt-2 text-center">
+            
+                <form action="/add-employee" method="post">
+                    <label for="firstName">First Name</label><br>
+                    <input type="text" name="firstName" id="firstName"><br>
+                    <label for="lastName">Last Name</label><br>
+                    <input type="text" name="lastName" id="lastName"><br>
+                    <label for="date_of_joining">Joining Date</label><br>
+                    <input type="date" name="date_of_joining" id="date_of_joining"><br>
+                    <label for="government_id">Government ID</label><br>
+                    <input type="text" name="government_id" id="government_id"><br>
+                    <label for="address">Address</label><br>
+                    <input type="text" name="address" id="address"><br>
+                    <label for="phone">Phone</label><br>
+                    <input type="tel" name="phone" id="phone"><br>
+                    <label for="designation">Designation</label><br>
+                    <input type="text" name="designation" id="designation"><br>
+                    <label for="salary">Salary</label><br>
+                    <input type="text" name="salary" id="salary"><br>
+                    <button type="submit">Add Employee</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Add Employee form end-->
+
+<!--Employess list-->
+<button class="bg-danger  text-light" onclick="document.getElementById('EmpList').style.display = 'block';">Employee List</button>
+
+
+
+<div class="container" id="EmpList" ">
     <div class="row">
         <div class="col border shadow text-warning">
-          <h3>Employees list</h3>
+            <h3>Employees List</h3>
+            <button class="bg-danger  text-light" onclick="document.getElementById('EmpList').style.display = 'none';">X</button>
+
+            <div class="container">
+                <div class="row">
+                    <% emps.forEach(emp => { %>
+                        <div class="col-12 border m-1 text-center">
+                            <table class="table shadow">
+                                <thead class="bg-primary text-light">
+                                    <tr>
+                                        <th class="border">Id</th>
+                                        <th class="border">First Name</th>
+                                        <th class="border">Last Name</th>
+                                        <th class="border">Joining Date</th>
+                                        <th class="border">Government ID</th>
+                                        <th class="border">Address</th>
+                                        <th class="border">Phone</th>
+                                        <th class="border">Designation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border"><%= emp.employee_id %></td>
+                                        <td class="border"><%= emp.first_name %></td>
+                                        <td class="border"><%= emp.last_name %></td>
+                                        <td class="border"><%= emp.date_of_joining %></td>
+                                        <td class="border"><%= emp.government_id %></td>
+                                        <td class="border"><%= emp.address %></td>
+                                        <td class="border"><%= emp.phone %></td>
+                                        <td class="border"><%= emp.designation %></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- Delete -->
+                            <form action="/delemp" method="POST" style="display: inline;">
+                                <input type="hidden" name="employee_id" value="<%= emp.employee_id %>">
+                                <input type="hidden" name="firstName" value="<%= emp.first_name %>">
+                                <input type="hidden" name="lastName" value="<%= emp.last_name %>">
+                                <input type="hidden" name="date_of_joining" value="<%= emp.date_of_joining %>">
+                                <input type="hidden" name="government_id" value="<%= emp.government_id %>">
+                                <input type="hidden" name="address" value="<%= emp.address %>">
+                                <input type="hidden" name="phone" value="<%= emp.phone %>">
+                                <input type="hidden" name="designation" value="<%= emp.designation %>">
+                                <input type="hidden" name="salary" value="<%= emp.salary %>">
+                                <button class="btn-outline-danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="container">
+<!--History employee-->
+<button class="bg-danger  text-light" onclick="document.getElementById('EmpHistory').style.display = 'block';">Employee History</button>
+
+<div class="container" id="EmpHistory" style="display: none;">
     <div class="row">
         <div class="col border shadow text-warning">
-          <h3>Employees History</h3>
+            <h3>Employees History List</h3>
+            <button class="bg-danger  text-light" onclick="document.getElementById('EmpHistory').style.display = 'none';">X</button>
+
+            <div class="container">
+                <div class="row">
+                    <% emph.forEach(hemp => { %>
+                        <div class="col-12 border m-1 text-center">
+                            <table class="table shadow">
+                                <thead class="bg-primary text-light">
+                                    <tr>
+                                        <th class="border">ID</th>
+                                        <th class="border">First Name</th>
+                                        <th class="border">Last Name</th>
+                                        <th class="border">Joining Date</th>
+                                        <th class="border">Government ID</th>
+                                        <th class="border">Address</th>
+                                        <th class="border">Phone</th>
+                                        <th class="border">Designation</th>
+                                        <th class="border">Resignation Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border"><%= hemp.id %></td>
+                                        <td class="border"><%= hemp.firstname %></td>
+                                        <td class="border"><%= hemp.lastname %></td>
+                                        <td class="border"><%= hemp.date_of_joining %></td>
+                                        <td class="border"><%= hemp.government_id %></td>
+                                        <td class="border"><%= hemp.address %></td>
+                                        <td class="border"><%= hemp.phone %></td>
+                                        <td class="border"><%= hemp.designation %></td>
+                                        <td class="border"><%= hemp.resigned_date %></td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- Delete -->
+                            <form action="/delperm" method="POST" style="display: inline;">
+                                <input type="hidden" name="firstname" value="<%= hemp.firstname %>">
+                                <button class="btn-outline-danger" type="submit">Delete Permanently</button>
+                            </form>
+                            
+                            
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-
-
-
 
 
 <%- include('partials/footer.ejs'); -%>

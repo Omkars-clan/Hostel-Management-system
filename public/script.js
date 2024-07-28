@@ -1,5 +1,16 @@
+// apparance of forms
+var AttendanceForm = document.getElementById("Attendence");
 var formContainer = document.getElementById("Room");
 var bookingForm = document.getElementById("booking");
+var EmployeesForm = document.getElementById("Addemployees");
+
+function Openaddemp(){
+    EmployeesForm.style.display = 'block';
+}
+
+function OpenAttendence(){
+    AttendanceForm.style.display = 'block';
+}
 
 function OpenForm() {
     formContainer.style.display = 'block'; // Display the form container
@@ -8,6 +19,7 @@ function OpenForm() {
 function closed(){
     formContainer.style.display = 'none';
     bookingForm.style.display = 'none';
+    AttendanceForm.style.display = 'none';
 }
 
 function Booking(roomNumber){
@@ -70,3 +82,35 @@ var day = DDY.getDay();
 var days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
 
 document.getElementById("head").innerText = "Hi, today is "+ days[day - 1] + " : " + date + "-" + month + "-" + year ;  
+
+ // Handle form submission for adding attendance
+        document.getElementById('addAttendanceForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch('/add-attendance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => response.json())
+              .then(data => {
+                  alert('Attendance record added successfully!');
+                  // Optionally reset the form
+                  this.reset();
+              }).catch(error => {
+                  console.error('Error:', error);
+              });
+        });
+
+               // Handle form submission for adding employee
+
+
+///Graph//////////
+
+  
+
+

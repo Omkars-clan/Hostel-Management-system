@@ -11,6 +11,7 @@ const db = new pg.Client({
     database: "Hotel",
     password: "Omkar",
     port: 5000, // Adjust port as per your PostgreSQL configuration
+    timezone: 'Asia/Kolkata' // Correct time zone format
 });
 db.connect();
 
@@ -18,7 +19,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 
-//Guest History
+
+
+//Guest History///////////////////////////////////////
 async function Hguest() {
     const guest = await db.query("select * from guest_history");
     return guest.rows;
@@ -95,15 +98,34 @@ async function Capacity() {
     }
 }
 
+//////////////Employess Details///////////////
+async function Demployee() {
+    const emp = await db.query("select * from employees");
+    return emp.rows;
+}
+
+async function Hemployee() {
+    const emph = await db.query("select * from employees_history");
+    return emph.rows;
+}
+
+
+
+
+/////////////////////////////////////////////
+
+
 app.set("view engine", "ejs");
 
 //emplyee management
 app.get('/views/Employee.ejs', async (req, res) => {
     try {
-       
-        res.render('Employee'); // Pass dguest to the Guest.ejs template
+        const emps = await Demployee(); // Fetch the guest data
+        const emph = await Hemployee(); // Fetch the guest data
+        res.render('Employee', { emps,emph }); // Pass dguest to the Guest.ejs template
+
     } catch (error) {
-        console.error("Error rendering Emplyee page:", error);
+        console.error("Error rendering Guest page:", error);
         res.status(500).send("Error rendering Guest page");
     }
 });
@@ -120,7 +142,22 @@ app.get('/views/Hguest.ejs', async (req, res) => {
 });
 
 
+// Route handler for rendering the main page (index.ejs)
+app.get("/", async (req, res) => {
+    try {
+        const allRooms = await getRooms();
+        const Trooms = await TRooms();
+        const tguest = await Tguest();
+        const capacities = await Capacity();
+        
 
+        res.render("index", { allRooms, Trooms, capacities, tguest });
+         // Render index.ejs
+    } catch (error) {
+        console.error("Error rendering main page:", error);
+        res.status(500).send("Error rendering main page");
+    }
+});
 // Example route to handle rendering Guest.ejs
 app.get('/views/Guest.ejs', async (req, res) => {
     try {
@@ -132,21 +169,7 @@ app.get('/views/Guest.ejs', async (req, res) => {
     }
 });
 
-// Route handler for rendering the main page (index.ejs)
-app.get("/", async (req, res) => {
-    try {
-        const allRooms = await getRooms();
-        const Trooms = await TRooms();
-        const tguest = await Tguest();
-        const capacities = await Capacity();
 
-        res.render("index", { allRooms, Trooms, capacities, tguest });
-         // Render index.ejs
-    } catch (error) {
-        console.error("Error rendering main page:", error);
-        res.status(500).send("Error rendering main page");
-    }
-});
 
 
 
@@ -216,6 +239,8 @@ app.post ("/del", async (req, res) => {
       }
     });
 
+    /// deleting guest history
+
     app.post ("/del_Hg", async (req, res) => {
         const H_guest = req.body.guest_name;
         console.log("Deleted Guest Data permanent Successfully");
@@ -253,6 +278,98 @@ app.post('/update', async (req, res) => {
         res.status(500).send("Error updating task");
     }
 });
+
+
+/// EMPLOYEE
+// Route to handle adding an employee
+app.post("/add-employee", async (req, res) => {
+    const { firstName, lastName, date_of_joining, government_id, address, phone, designation, salary } = req.body;
+  
+    try {
+        const result = await db.query(
+            `INSERT INTO employees (first_name, last_name, date_of_joining, government_id, address, phone, designation, salary)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+             RETURNING employee_id`,
+            [firstName, lastName, date_of_joining, government_id, address, phone, designation, salary]
+        );
+        
+        res.send(`<script>alert("Added Employee successfully! Employee Number: ${result.rows[0].employee_id}"); window.location.href = "/";</script>`);
+    } catch (err) {
+        console.error("Error creating employee:", err);
+        res.status(500).send('Error creating employee');
+    }
+});
+
+
+
+// Route to handle adding attendance
+app.post("/add-attendence", async (req, res) => {
+    const { employeeId, attendanceDate, present, workType, hours } = req.body;
+  
+    try {
+        const result = await db.query(
+            `INSERT INTO employee_attendance (employee_id, attendance_date, present, work_type, hours)
+            VALUES ($1, $2, $3, $4, $5)
+             RETURNING  employee_id , attendance_date,work_type,present`,
+            [employeeId, attendanceDate, present, workType, hours]
+        );
+        
+        res.send(`<script>alert("Added Attendence successfully! Check Details before you press ok : ${"Employee ID is " + result.rows[0].employee_id + ", Date & Time:"+  result.rows[0].attendance_date + " Todays attendence is: " + result.rows[0].present + ", Cannot be updated check before you click ok"}"); window.location.href = "/";</script>`);
+    } catch (err) {
+        console.error("Error creating attendence:", err);
+        res.status(500).send('Error creating attendence already attendence may be created please do not violate');
+    }
+});
+
+///Employee details delete 
+app.post("/delemp", async (req, res) => {
+    const employeeid = req.body.employee_id;
+    const { firstName, lastName, date_of_joining, government_id, address, phone, designation, salary } = req.body;
+
+    try {
+        await db.query("DELETE FROM employees WHERE employee_id = $1", [employeeid]);
+        const result = await db.query(
+            `INSERT INTO employees_history (firstName, lastName, date_of_joining, government_id, address, phone, designation, salary) 
+            VALUES ($1, $2, $3, $4, $5, $6 ,$7, $8) RETURNING firstName`,
+            [firstName, lastName, date_of_joining, government_id, address, phone, designation, salary]
+        );
+
+        res.send(`
+            <script>
+                alert("Removed data successfully! Check Details before you press ok: Employee Name is ${result.rows[0].firstname}");
+                window.location.href = "/";
+            </script>
+        `);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("An error occurred while deleting the employee.");
+    }
+});
+
+/// Employee history delete
+app.post("/delperm", async (req, res) => {
+    const firstName = req.body.firstname;
+
+    console.log("Received firstname for deletion:", firstName);
+
+    try {
+        const result = await db.query("DELETE FROM employees_history WHERE firstname = $1 RETURNING *", [firstName]);
+
+        if (result.rowCount === 0) {
+            console.log("No employee history found with the given firstname.");
+            res.status(404).send("No employee history found with the given firstname.");
+        } else {
+            console.log("Deleted Employee Data Permanently Successfully:", result.rows);
+            res.redirect("/");
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("An error occurred while deleting the employee history.");
+    }
+});
+
+
+
 
 
 

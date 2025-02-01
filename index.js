@@ -6,14 +6,14 @@ const app = express();
 const port = 3000;
 
 const db = new pg.Client({
-    user: "postgres",
-    host: "localhost",
-    database: "Hotel",
-    password: "Omkar",
-    port: 5000, // Adjust port as per your PostgreSQL configuration
-    timezone: 'Asia/Kolkata' // Correct time zone format
+    connectionString: "postgresql://neondb_owner:npg_a4wqtdxsyp5z@ep-muddy-waterfall-a5a6pr27-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require",
+    ssl: {
+        rejectUnauthorized: false,
+    },
 });
-db.connect();
+db.connect().then(() => console.log("Connected to Neon.tech PostgreSQL"))
+    .catch(err => console.error("Connection error", err.stack));
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));

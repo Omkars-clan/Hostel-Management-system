@@ -14,6 +14,7 @@ const db = new pg.Client({
 db.connect().then(() => console.log("Connected to Neon.tech PostgreSQL"))
     .catch(err => console.error("Connection error", err.stack));
 
+app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
